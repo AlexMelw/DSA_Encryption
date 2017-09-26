@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSAcli", "DSAcli\DSAcli.csproj", "{FDEAC8D0-AA0D-4A86-8F51-3DDEA05AFF77}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DSAEncDecLib", "DSAEncDecLib\DSAEncDecLib.csproj", "{C886F598-CF53-4CCF-AA6B-F1127E603959}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NHelpers", "..\EasySharp\NHelpers\NHelpers.csproj", "{CAC83CF1-E5D4-45F6-85CC-E0AD29B55A8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDEAC8D0-AA0D-4A86-8F51-3DDEA05AFF77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDEAC8D0-AA0D-4A86-8F51-3DDEA05AFF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDEAC8D0-AA0D-4A86-8F51-3DDEA05AFF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDEAC8D0-AA0D-4A86-8F51-3DDEA05AFF77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C886F598-CF53-4CCF-AA6B-F1127E603959}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C886F598-CF53-4CCF-AA6B-F1127E603959}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C886F598-CF53-4CCF-AA6B-F1127E603959}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C886F598-CF53-4CCF-AA6B-F1127E603959}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAC83CF1-E5D4-45F6-85CC-E0AD29B55A8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC83CF1-E5D4-45F6-85CC-E0AD29B55A8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC83CF1-E5D4-45F6-85CC-E0AD29B55A8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC83CF1-E5D4-45F6-85CC-E0AD29B55A8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8D005939-B3B5-45CF-B2B0-C1D279E97985}
+	EndGlobalSection
+EndGlobal

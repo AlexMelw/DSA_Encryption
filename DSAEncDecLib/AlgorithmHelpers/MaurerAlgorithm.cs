@@ -6,7 +6,7 @@
     using System.Threading.Tasks;
     using EasySharp.NHelpers.Utils.Cryptography;
 
-    class MaurerAlgorithm
+    public class MaurerAlgorithm
     {
         private readonly Random _randomNumberGenerator;
         private readonly int _seed;
@@ -30,22 +30,22 @@
             return BigInteger.Log10(n) / Math.Log10(2);
         }
 
-        public async Task<BigInteger> ProvablePrimeAsync(int k)
+        public async Task<BigInteger> ProvablePrimeAsync(int bitsSize)
         {
             BigInteger N = 0;
             List<long> primes = null;
             HCSRAlgorithm hc = new HCSRAlgorithm(_seed);
             //Random random = new Random(seed);
 
-            if (k <= 20)
+            if (bitsSize <= 20)
             {
                 bool composite = true;
 
                 while (composite)
                 {
-                    long n = 1 << (k - 1);
+                    long n = 1 << (bitsSize - 1);
 
-                    for (int i = 0; i < k - 1; i++)
+                    for (int i = 0; i < bitsSize - 1; i++)
                         n |= (long) _randomNumberGenerator.Next(2) << i;
 
                     long bound = (long) Math.Sqrt(n);
@@ -60,7 +60,6 @@
                         N = n;
                 }
             }
-
             else
             {
                 double c = 0.1;
@@ -68,7 +67,7 @@
 
                 double r = 0.5;
 
-                if (k > 2 * m)
+                if (bitsSize > 2 * m)
                 {
                     bool done = false;
 
@@ -77,26 +76,25 @@
                         double s = _randomNumberGenerator.NextDouble();
 
                         r = Math.Pow(2, s - 1);
-                        done = (k - r * k) > m;
+                        done = (bitsSize - r * bitsSize) > m;
                     }
                 }
 
-                BigInteger q = await ProvablePrimeAsync((int) Math.Floor(r * k) + 1).ConfigureAwait(false);
+                BigInteger q = await ProvablePrimeAsync((int) Math.Floor(r * bitsSize) + 1).ConfigureAwait(false);
                 BigInteger t = 2;
-                BigInteger p = BigInteger.Pow(t, k - 1);
+                BigInteger p = BigInteger.Pow(t, bitsSize - 1);
                 BigInteger Q = t * q;
-                BigInteger I = p / Q;
-                BigInteger S = p % Q;
+                BigInteger I = p / Q; //BigInteger S = p % Q;
+
                 bool success = false;
-                long B = (long) (c * k * k);
+                long B = (long) (c * bitsSize * bitsSize);
 
                 Sieve(B, out primes);
 
                 while (!success)
                 {
                     bool done = false;
-                    long[] o = { 1, 1 };
-                    long[] z = { 1, 0 };
+
                     BigInteger J = I + 1;
                     BigInteger K = 2 * I;
                     BigInteger R = hc.RandomRange(J, K);
@@ -117,12 +115,12 @@
                         if (!hc.Composite(N, 20))
                         {
                             BigInteger a = hc.RandomRange(t, N - t);
-                            BigInteger b = BigInteger.ModPow(a, N - 1, N), d = 0;
+                            BigInteger b = BigInteger.ModPow(a, N - 1, N);
 
                             if (b == 1)
                             {
                                 b = BigInteger.ModPow(a, 2 * R, N);
-                                d = BigInteger.GreatestCommonDivisor(b - 1, N);
+                                BigInteger d = BigInteger.GreatestCommonDivisor(b - 1, N);
                                 success = d == 1;
                             }
                         }
@@ -140,37 +138,44 @@
             // less than or equal B0
 
             bool[] sieve = new bool[B0 + 1];
-            long c = 3, i, inc;
+            long c = 3;
 
             sieve[2] = true;
 
-            for (i = 3; i <= B0; i++)
+            for (long i = 3; i <= B0; i++)
+            {
                 if (i % 2 == 1)
+                {
                     sieve[i] = true;
+                }
+            }
 
             do
             {
-                i = c * c;
-                inc = c + c;
+                long j = c * c;
+                long inc = c + c;
 
-                while (i <= B0)
+                while (j <= B0)
                 {
-                    sieve[i] = false;
+                    sieve[j] = false;
 
-                    i += inc;
+                    j += inc;
                 }
 
                 c += 2;
+                while (!sieve[c]) c++;
 
-                while (!sieve[c])
-                    c++;
             } while (c * c <= B0);
 
             primes = new List<long>();
 
-            for (i = 2; i <= B0; i++)
+            for (long i = 2; i <= B0; i++)
+            {
                 if (sieve[i])
+                {
                     primes.Add(i);
+                }
+            }
         }
     }
 }

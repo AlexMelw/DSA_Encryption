@@ -5,7 +5,7 @@ namespace DSAEncDecLib.AlgorithmHelpers
     using System.Security.Cryptography;
     using System.Threading;
 
-    public static class PrimeExtensions
+    public static class BigIntegerPrimeExtensions
     {
         // Random generator (thread safe)
         private static readonly ThreadLocal<Random> SGen = new ThreadLocal<Random>(() => new Random());
@@ -13,6 +13,20 @@ namespace DSAEncDecLib.AlgorithmHelpers
         // Random generator (thread safe)
         private static Random Gen => SGen.Value;
 
+        /// <summary>
+        ///     Returns <see langword="true" /> if this BigInteger is probably prime, <see langword="false" /> if it's definitely
+        ///     composite. If certainty is &lt;= 0, <see langword="true" /> is returned.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="witnesses">
+        ///     Is a measure of the uncertainty that the caller is willing to tolerate: if the call returns
+        ///     <see langword="true" /> the probability that this BigInteger is prime exceeds ( 1 - 1/(2^certainty) ). The
+        ///     execution time of this method is proportional to the value of this parameter.
+        /// </param>
+        /// <returns>
+        ///     <see langword="true" /> if this BigInteger is probably prime, <see langword="false" /> if it's definitely a
+        ///     composite one.
+        /// </returns>
         public static bool IsProbablyPrime(this BigInteger value, int witnesses = 10)
         {
             if (value <= 1)

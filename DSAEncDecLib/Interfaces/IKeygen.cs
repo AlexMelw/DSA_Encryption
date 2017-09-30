@@ -1,10 +1,10 @@
 ﻿namespace DSAEncDecLib.Interfaces
 {
     using System.Threading.Tasks;
+    using SpecificTypes;
 
     public interface IKeygen
     {
-        Task<(byte[] modulus, byte[] encryptionExponent, byte[] decryptionExponent)>
-            GenerateKeysAsync(int keySizeBits);
+        Task<(DSAPublicKey, DSAPrivateKey)> GenerateKeyPairAsync();
     }
 }

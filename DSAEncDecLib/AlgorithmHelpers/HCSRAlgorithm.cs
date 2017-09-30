@@ -116,11 +116,9 @@
         {
             if (lower <= long.MaxValue && upper <= long.MaxValue && lower < upper)
             {
-                BigInteger r;
-
                 while (true)
                 {
-                    r = lower + (long) (((long) upper - (long) lower) * _randomNumberGenerator.NextDouble());
+                    BigInteger r = lower + (long) (((long) upper - (long) lower) * _randomNumberGenerator.NextDouble());
 
                     if (r >= lower && r <= upper)
                         return r;
@@ -142,8 +140,13 @@
             }
         }
 
+        /// <summary>
+        /// Returns square root of a modulo p if it exists, 0 otherwise.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <param name="p"></param>
+        /// <returns>Square root of a modulo p if it exists, 0 otherwise.</returns>
         public BigInteger SquareRootModPrime(BigInteger a, BigInteger p)
-            // returns square root of a modulo p if it exists 0 otherwise
         {
             long e = 0, r, s;
             BigInteger b = 0, bp = 0, q = p - 1, m = 0, n = 0;

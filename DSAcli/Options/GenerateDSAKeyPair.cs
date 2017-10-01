@@ -1,6 +1,5 @@
-﻿namespace DSAcli
+﻿namespace DSAcli.Options
 {
-    using System;
     using System.Collections.Generic;
     using CommandLine;
     using CommandLine.Text;

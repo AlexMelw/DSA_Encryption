@@ -46,16 +46,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IDigitalSignaturePath.cs" />
+    <Compile Include="Interfaces\IDigitalSignaturePath.cs" />
     <Compile Include="Interfaces\IImputableOption.cs" />
     <Compile Include="Interfaces\IPrivateKeyOption.cs" />
     <Compile Include="Interfaces\IPublicKeyOption.cs" />
-    <Compile Include="VerifyDigitalSignatureVerbOptions.cs" />
-    <Compile Include="SignDataVerbOptions.cs" />
-    <Compile Include="GenerateDSAKeyPair.cs" />
+    <Compile Include="Facade\Program.CommandProcessor.cs" />
+    <Compile Include="Options\VerifyDigitalSignatureVerbOptions.cs" />
+    <Compile Include="Options\SignDataVerbOptions.cs" />
+    <Compile Include="Options\GenerateDSAKeyPair.cs" />
     <Compile Include="Interfaces\IOutputableOption.cs" />
-    <Compile Include="Program.CodeBehind.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Facade\Program.CodeBehind.cs" />
+    <Compile Include="Facade\Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

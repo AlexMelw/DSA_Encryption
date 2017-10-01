@@ -1,6 +1,7 @@
-﻿namespace DSAcli
+﻿namespace DSAcli.Facade
 {
     using CommandLine;
+    using Options;
 
     static partial class Program
     {

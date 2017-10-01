@@ -1,4 +1,4 @@
-namespace DSAcli
+namespace DSAcli.Interfaces
 {
     internal interface IDigitalSignaturePath
     {

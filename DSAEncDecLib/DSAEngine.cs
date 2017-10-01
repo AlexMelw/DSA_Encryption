@@ -7,7 +7,7 @@
     using Interfaces;
     using SpecificTypes;
 
-    public class DSAEngine : IKeygen, ISignatureCreator, ISignatureValidator
+    class DSAEngine : IKeygen, ISignatureCreator, ISignatureValidator
     {
         public DSAPublicKey PublicKey { get; private set; }
 
@@ -89,7 +89,7 @@
             return (p, q);
         }
 
-        private static Task<ValueTuple<BigInteger, BigInteger>> GeneratePQPrimesAsync()
+        private static Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync()
         {
             BigInteger p = -1;
             BigInteger q = -1;

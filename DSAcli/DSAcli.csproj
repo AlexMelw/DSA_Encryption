@@ -46,9 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DecryptVerbOptions.cs" />
-    <Compile Include="EncryptVerbOptions.cs" />
-    <Compile Include="GenerateRSAKeyPair.cs" />
+    <Compile Include="VerifyDigitalSignatureVerbOptions.cs" />
+    <Compile Include="SignDataVerbOptions.cs" />
+    <Compile Include="GenerateDSAKeyPair.cs" />
     <Compile Include="IOutputableOption.cs" />
     <Compile Include="Program.CodeBehind.cs" />
     <Compile Include="Program.cs" />
@@ -58,18 +58,22 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\EasySharp\NHelpers\NHelpers.csproj">
+      <Project>{CAC83CF1-E5D4-45F6-85CC-E0AD29B55A8E}</Project>
+      <Name>NHelpers</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DSAEncDecLib\DSAEncDecLib.csproj">
       <Project>{c886f598-cf53-4ccf-aa6b-f1127e603959}</Project>
       <Name>DSAEncDecLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Key.ico" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommandLineParser">
       <Version>2.1.1-beta</Version>
     </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Key.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -30,7 +30,7 @@
             var d = BigIntegerUtil.NextBigInteger(1, q);
             var beta = BigInteger.ModPow(alpha, d, p);
 
-            var dsaPublicKey = new DSAPublicKey((p, q, alpha, beta));
+            var dsaPublicKey = new DSAPublicKey(p, q, alpha, beta);
             var dsaPrivateKey = new DSAPrivateKey(d);
 
             Console.Out.WriteLine("q | p-1 = {0}", (p - 1) % q == 0);

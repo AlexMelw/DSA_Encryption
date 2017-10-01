@@ -3,9 +3,10 @@
     using System.Collections.Generic;
     using CommandLine;
     using CommandLine.Text;
+    using Interfaces;
 
     [Verb("enc", HelpText = "Enforces data digital signing with the specified DSA key-pair.")]
-    class SignDataVerbOptions : IOutputableOption
+    class SignDataVerbOptions : IOutputableOption, IImputableOption, IPublicKeyOption, IPrivateKeyOption
     {
         [Option('i', "input", Required = true,
             HelpText = "Source file containing the data to be signed using DSA.")]

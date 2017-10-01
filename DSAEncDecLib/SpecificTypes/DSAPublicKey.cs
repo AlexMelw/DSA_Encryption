@@ -9,12 +9,12 @@
         public BigInteger Alpha { get; }
         public BigInteger Beta { get; }
 
-        public DSAPublicKey((BigInteger, BigInteger, BigInteger, BigInteger) key)
+        public DSAPublicKey(BigInteger p, BigInteger q, BigInteger alpha, BigInteger beta)
         {
-            P = key.Item1;
-            Q = key.Item2;
-            Alpha = key.Item3;
-            Beta = key.Item4;
+            P = p;
+            Q = q;
+            Alpha = alpha;
+            Beta = beta;
         }
     }
 }

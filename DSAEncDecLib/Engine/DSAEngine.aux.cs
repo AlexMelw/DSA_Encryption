@@ -1,4 +1,4 @@
-namespace DSAEncDecLib
+namespace DSAEncDecLib.Engine
 {
     using System;
     using System.Numerics;
@@ -10,21 +10,58 @@ namespace DSAEncDecLib
     {
         private async Task<(BigInteger p, BigInteger q)> GeneratePQPairAsync()
         {
-            (BigInteger p, BigInteger q) = await
-                (await Task.WhenAny(
-                        GeneratePQPrimesAsync(1),
-                        GeneratePQPrimesAsync(2),
-                        GeneratePQPrimesAsync(3),
-                        GeneratePQPrimesAsync(4))
-                    .ConfigureAwait(false))
-                .ConfigureAwait(false);
+            (BigInteger p, BigInteger q) = default((BigInteger, BigInteger));
+
+            switch (Environment.ProcessorCount)
+            {
+                case 16:
+                    (p, q) = await
+                        (await Task.WhenAny(
+                                GeneratePQPrimesAsync(1),
+                                GeneratePQPrimesAsync(2),
+                                GeneratePQPrimesAsync(3),
+                                GeneratePQPrimesAsync(4),
+                                GeneratePQPrimesAsync(5),
+                                GeneratePQPrimesAsync(6),
+                                GeneratePQPrimesAsync(7),
+                                GeneratePQPrimesAsync(8))
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
+                    break;
+
+                case 8:
+                    (p, q) = await
+                        (await Task.WhenAny(
+                                GeneratePQPrimesAsync(1),
+                                GeneratePQPrimesAsync(2),
+                                GeneratePQPrimesAsync(3),
+                                GeneratePQPrimesAsync(4))
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
+                    break;
+
+                case 4:
+                    (p, q) = await
+                        (await Task.WhenAny(
+                                GeneratePQPrimesAsync(1),
+                                GeneratePQPrimesAsync(2))
+                            .ConfigureAwait(false))
+                        .ConfigureAwait(false);
+                    break;
+
+                case 2:
+                case 1:
+                default:
+                    (p, q) = await GeneratePQPrimesAsync(1)
+                        .ConfigureAwait(false);
+                    break;
+            }
 
 
             Console.Out.WriteLine(" ------------------- p = {0}", p);
             Console.Out.WriteLine(" ------------------- q = {0}", q);
 
-
-            await Task.Delay(10);
+            await Task.Delay(10 * 1000).ConfigureAwait(false);
 
             return (p, q);
         }
@@ -33,8 +70,7 @@ namespace DSAEncDecLib
         {
             (BigInteger, BigInteger) pq = await Task.Run(() =>
             {
-                BigInteger p = 0;
-                BigInteger q = 0;
+                (BigInteger p, BigInteger q) = default((BigInteger, BigInteger));
 
                 bool found = false;
                 while (!found)

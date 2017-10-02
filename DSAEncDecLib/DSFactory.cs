@@ -1,5 +1,6 @@
 ﻿namespace DSAEncDecLib
 {
+    using Engine;
     using Interfaces;
 
     public static class DSFactory

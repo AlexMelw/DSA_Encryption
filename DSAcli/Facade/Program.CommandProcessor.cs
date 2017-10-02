@@ -1,4 +1,5 @@
-﻿namespace DSAcli.Facade {
+﻿namespace DSAcli.Facade
+{
     using System;
     using System.Threading.Tasks;
     using DSAEncDecLib;

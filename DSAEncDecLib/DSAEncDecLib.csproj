@@ -48,8 +48,8 @@
     <Compile Include="AlgorithmHelpers\MaurerAlgorithm.cs" />
     <Compile Include="AlgorithmHelpers\BigIntegerPrimeExtensions.cs" />
     <Compile Include="AlgorithmHelpers\RsaHelper.cs" />
-    <Compile Include="DSAEngine.aux.cs" />
-    <Compile Include="DSAEngine.cs" />
+    <Compile Include="Engine\DSAEngine.aux.cs" />
+    <Compile Include="Engine\DSAEngine.cs" />
     <Compile Include="DSFactory.cs" />
     <Compile Include="SpecificTypes\DSASignature.cs" />
     <Compile Include="SpecificTypes\DSAPrivateKey.cs" />

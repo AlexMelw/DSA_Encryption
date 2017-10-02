@@ -1,4 +1,4 @@
-﻿namespace DSAEncDecLib
+﻿namespace DSAEncDecLib.Engine
 {
     using System;
     using System.Numerics;

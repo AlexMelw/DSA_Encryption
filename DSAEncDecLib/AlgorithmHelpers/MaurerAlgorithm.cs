@@ -30,7 +30,7 @@
             return BigInteger.Log10(n) / Math.Log10(2);
         }
 
-        public async Task<BigInteger> ProvablePrimeAsync(int bitsSize)
+        public async Task<BigInteger> GetProvablePrimeAsync(int bitsSize)
         {
             BigInteger N = 0;
             List<long> primes = null;
@@ -80,7 +80,7 @@
                     }
                 }
 
-                BigInteger q = await ProvablePrimeAsync((int) Math.Floor(r * bitsSize) + 1).ConfigureAwait(false);
+                BigInteger q = await GetProvablePrimeAsync((int) Math.Floor(r * bitsSize) + 1).ConfigureAwait(false);
                 BigInteger t = 2;
                 BigInteger p = BigInteger.Pow(t, bitsSize - 1);
                 BigInteger Q = t * q;

@@ -2,6 +2,7 @@ namespace DSAEncDecLib.Engine
 {
     using System;
     using System.Numerics;
+    using System.Threading;
     using System.Threading.Tasks;
     using AlgorithmHelpers;
     using SpecificTypes;
@@ -10,82 +11,102 @@ namespace DSAEncDecLib.Engine
     {
         private async Task<(BigInteger p, BigInteger q)> GeneratePQPairAsync()
         {
+            var cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+
             (BigInteger p, BigInteger q) = default((BigInteger, BigInteger));
 
-            switch (Environment.ProcessorCount)
+            try
             {
-                case 16:
-                    (p, q) = await
-                        (await Task.WhenAny(
-                                GeneratePQPrimesAsync(1),
-                                GeneratePQPrimesAsync(2),
-                                GeneratePQPrimesAsync(3),
-                                GeneratePQPrimesAsync(4),
-                                GeneratePQPrimesAsync(5),
-                                GeneratePQPrimesAsync(6),
-                                GeneratePQPrimesAsync(7),
-                                GeneratePQPrimesAsync(8))
-                            .ConfigureAwait(false))
-                        .ConfigureAwait(false);
-                    break;
+                switch (Environment.ProcessorCount)
+                {
+                    case 16:
+                        (p, q) = await
+                            (await Task.WhenAny(
+                                    GeneratePQPrimesAsync(1, cancellationToken),
+                                    GeneratePQPrimesAsync(2, cancellationToken),
+                                    GeneratePQPrimesAsync(3, cancellationToken),
+                                    GeneratePQPrimesAsync(4, cancellationToken),
+                                    GeneratePQPrimesAsync(5, cancellationToken),
+                                    GeneratePQPrimesAsync(6, cancellationToken),
+                                    GeneratePQPrimesAsync(7, cancellationToken),
+                                    GeneratePQPrimesAsync(8, cancellationToken))
+                                .ConfigureAwait(false))
+                            .ConfigureAwait(false);
+                        break;
 
-                case 8:
-                    (p, q) = await
-                        (await Task.WhenAny(
-                                GeneratePQPrimesAsync(1),
-                                GeneratePQPrimesAsync(2),
-                                GeneratePQPrimesAsync(3),
-                                GeneratePQPrimesAsync(4))
-                            .ConfigureAwait(false))
-                        .ConfigureAwait(false);
-                    break;
+                    case 8:
+                        (p, q) = await
+                            (await Task.WhenAny(
+                                    GeneratePQPrimesAsync(1, cancellationToken),
+                                    GeneratePQPrimesAsync(2, cancellationToken),
+                                    GeneratePQPrimesAsync(3, cancellationToken),
+                                    GeneratePQPrimesAsync(4, cancellationToken))
+                                .ConfigureAwait(false))
+                            .ConfigureAwait(false);
+                        break;
 
-                case 4:
-                    (p, q) = await
-                        (await Task.WhenAny(
-                                GeneratePQPrimesAsync(1),
-                                GeneratePQPrimesAsync(2))
-                            .ConfigureAwait(false))
-                        .ConfigureAwait(false);
-                    break;
+                    case 4:
+                        (p, q) = await
+                            (await Task.WhenAny(
+                                    GeneratePQPrimesAsync(1, cancellationToken),
+                                    GeneratePQPrimesAsync(2, cancellationToken))
+                                .ConfigureAwait(false))
+                            .ConfigureAwait(false);
+                        break;
 
-                case 2:
-                case 1:
-                default:
-                    (p, q) = await GeneratePQPrimesAsync(1)
-                        .ConfigureAwait(false);
-                    break;
+                    case 2:
+                    case 1:
+                    default:
+                        (p, q) = await GeneratePQPrimesAsync(1, cancellationToken)
+                            .ConfigureAwait(false);
+                        break;
+                }
+                cancellationTokenSource.Cancel();
             }
-
+            finally
+            {
+                cancellationTokenSource.Dispose();
+                await Console.Out.WriteLineAsync("@@@@@@@@@@@@@@@ SUCCESSFULLY CANCELLED @@@@@@@@@@@@@@").ConfigureAwait(false);
+            }
 
             Console.Out.WriteLine(" ------------------- p = {0}", p);
             Console.Out.WriteLine(" ------------------- q = {0}", q);
 
-            await Task.Delay(10 * 1000).ConfigureAwait(false);
-
             return (p, q);
         }
 
-        private static async Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync(int x)
+        private static async Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync(int taskId, CancellationToken cancellationToken)
         {
-            (BigInteger, BigInteger) pq = await Task.Run(() =>
+            (BigInteger, BigInteger) pq = await Task.Run(async () =>
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    await Console.Out.WriteLineAsync($"Task {taskId} is canceled before started.").ConfigureAwait(false);
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 (BigInteger p, BigInteger q) = default((BigInteger, BigInteger));
 
                 bool found = false;
                 while (!found)
                 {
-                    q = MaurerAlgorithm.Instance.ProvablePrimeAsync(160).Result;
+                    await CancelIfCancellationRequested(taskId, cancellationToken).ConfigureAwait(false);
+
+                    q = await MaurerAlgorithm.Instance.GetProvablePrimeAsync(160).ConfigureAwait(false);
 
                     for (int i = 0; i < 4096; i++)
                     {
+                        await CancelIfCancellationRequested(taskId, cancellationToken).ConfigureAwait(false);
+
                         BigInteger m = BigIntegerUtil.RandomPositiveFixedSizeBigInteger(1024);
                         BigInteger mr = m % (2 * q);
                         p = m - mr + 1;
 
                         if (p.IsProbablyPrime(10))
                         {
-                            Console.Out.WriteLine($"Number of iterations performed: {i + 1}");
+                            await Console.Out.WriteLineAsync($"Number of iterations performed: {i + 1}").ConfigureAwait(false);
                             //Console.Out.WriteLine("m = {0}", m);
                             //Console.Out.WriteLine($"m len = {m.ToByteArray().Length * 8}");
 
@@ -97,14 +118,24 @@ namespace DSAEncDecLib.Engine
                     }
                 }
 
-                Console.Out.WriteLine("p = {0}", p);
-                Console.Out.WriteLine("q = {0}", q);
-                Console.Out.WriteLine($"======================= TASK {x} COMPLETED =========================\n");
+                await Console.Out.WriteLineAsync($"p = {p}").ConfigureAwait(false);
+                await Console.Out.WriteLineAsync($"q = {q}").ConfigureAwait(false);
+                await Console.Out.WriteLineAsync($"======================= TASK {taskId} COMPLETED =========================\n").ConfigureAwait(false);
 
                 return (p, q);
-            }).ConfigureAwait(false);
 
-            return (pq.Item1, pq.Item2);
+            }, cancellationToken).ConfigureAwait(false);
+
+            return pq;
+
+            async Task CancelIfCancellationRequested(int cancelledTaskId, CancellationToken issuedCancellationToken)
+            {
+                if (issuedCancellationToken.IsCancellationRequested)
+                {
+                    await Console.Out.WriteLineAsync($"Task [ID: {cancelledTaskId}] is canceled.").ConfigureAwait(false);
+                    issuedCancellationToken.ThrowIfCancellationRequested();
+                }
+            }
         }
 
         private static BigInteger NormalizeY(BigInteger modulus, BigInteger y) => y < 0 ? y + modulus : y;

@@ -1,5 +1,6 @@
 ﻿namespace DSAcli.Facade
 {
+    using System;
     using CommandLine;
     using Options;
 

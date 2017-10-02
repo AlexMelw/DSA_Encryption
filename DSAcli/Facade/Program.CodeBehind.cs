@@ -146,7 +146,7 @@
             string extension = keyType.ToString().ToLower();
 
             var finalFileName = string.IsNullOrWhiteSpace(keyParams.OutputFileNamePrefix)
-                ? $"RSA-{keyParams.KeyBitLength}bits_{timeStamp}.{extension}"
+                ? $"DSA-{keyParams.KeyBitLength}bits_{timeStamp}.{extension}"
                 : $"{keyParams.OutputFileNamePrefix}-{keyParams.KeyBitLength}bits.{extension}";
 
             return finalFileName;

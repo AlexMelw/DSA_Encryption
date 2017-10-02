@@ -5,7 +5,7 @@
     using CommandLine.Text;
     using Interfaces;
 
-    [Verb("dec", HelpText = "Enforces verification of data digital signature using DSA public key.")]
+    [Verb("ver", HelpText = "Enforces verification of digital signature of data using DSA public key.")]
     class VerifyDigitalSignatureVerbOptions : IImputableOption, IPublicKeyOption, IDigitalSignaturePath
     {
         [Option('i', "input", Required = true,

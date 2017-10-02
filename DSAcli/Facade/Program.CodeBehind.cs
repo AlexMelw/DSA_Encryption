@@ -25,7 +25,7 @@
                 {
                     Console.Out.WriteLine($"Error on reading file {option.DigitalSignaturePath}");
                     Environment.Exit(1);
-                    return default(DSASignature);
+                    return default;
                 }
             }
         }
@@ -47,7 +47,7 @@
                 {
                     Console.Out.WriteLine($"Error on reading file {option.PublicKeyPath}");
                     Environment.Exit(1);
-                    return default(DSAPublicKey);
+                    return default;
                 }
             }
         }

@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -47,6 +48,7 @@
     <Compile Include="AlgorithmHelpers\MaurerAlgorithm.cs" />
     <Compile Include="AlgorithmHelpers\BigIntegerPrimeExtensions.cs" />
     <Compile Include="AlgorithmHelpers\RsaHelper.cs" />
+    <Compile Include="DSAEngine.aux.cs" />
     <Compile Include="DSAEngine.cs" />
     <Compile Include="DSFactory.cs" />
     <Compile Include="SpecificTypes\DSASignature.cs" />

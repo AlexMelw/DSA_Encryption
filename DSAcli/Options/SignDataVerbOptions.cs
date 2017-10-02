@@ -5,7 +5,7 @@
     using CommandLine.Text;
     using Interfaces;
 
-    [Verb("enc", HelpText = "Enforces data digital signing with the specified DSA key-pair.")]
+    [Verb("sign", HelpText = "Enforces digital signing of data with the specified DSA key-pair.")]
     class SignDataVerbOptions : IOutputableOption, IImputableOption, IPublicKeyOption, IPrivateKeyOption
     {
         [Option('i', "input", Required = true,

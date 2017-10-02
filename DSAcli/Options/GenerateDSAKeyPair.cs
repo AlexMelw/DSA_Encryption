@@ -11,11 +11,11 @@
             HelpText =
                 "Specifies bit-length (integer value) of the DSA [p] factor " +
                 "(the [q] length will be automatically adjusted). " +
-                "Both [p] and [q] are part of DSA public key.\n" +
-                "Allowed values: 1024, 2048, 3072. Recommended value: 1024.\n" +
-                "For [p]=1024, [q]=160\n" +
-                "For [p]=2048, [q]=224\n" +
-                "For [p]=3072, [q]=256",
+                "Both [p] and [q] are part of DSA public key. " +
+                "Allowed values: 1024, 2048, 3072. Recommended value: 1024. " +
+                "For [p]=1024, [q]=160; " +
+                "For [p]=2048, [q]=224; " +
+                "For [p]=3072, [q]=256.",
             Default = 1024)]
         public int KeyBitLength { get; set; }
 

@@ -6,5 +6,7 @@
     {
         void ImportPublicKey(DSAPublicKey publicKey);
         bool VerifySignature(byte[] hashOfSignedData, DSASignature signature);
+
+        DSAPublicKey PublicKey { get; }
     }
 }

@@ -32,7 +32,7 @@
             var dsaPublicKey = new DSAPublicKey(p, q, alpha, beta);
             var dsaPrivateKey = new DSAPrivateKey(d);
 
-            Console.Out.WriteLine("q | p-1 = {0}", (p - 1) % q == 0);
+            //Console.Out.WriteLine("q | p-1 = {0}", (p - 1) % q == 0);
 
             return (dsaPublicKey, dsaPrivateKey);
         }

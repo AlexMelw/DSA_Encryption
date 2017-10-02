@@ -2,6 +2,7 @@ namespace DSAEncDecLib.Engine
 {
     using System;
     using System.Numerics;
+    using System.Runtime.InteropServices.WindowsRuntime;
     using System.Threading;
     using System.Threading.Tasks;
     using AlgorithmHelpers;
@@ -11,9 +12,10 @@ namespace DSAEncDecLib.Engine
     {
         private async Task<(BigInteger p, BigInteger q)> GeneratePQPairAsync()
         {
+            await Console.Out.WriteLineAsync("The key-pair generation process is running...").ConfigureAwait(false);
+
             var cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
-
 
             (BigInteger p, BigInteger q) = default((BigInteger, BigInteger));
 
@@ -68,22 +70,20 @@ namespace DSAEncDecLib.Engine
             finally
             {
                 cancellationTokenSource.Dispose();
-                await Console.Out.WriteLineAsync("@@@@@@@@@@@@@@@ SUCCESSFULLY CANCELLED @@@@@@@@@@@@@@").ConfigureAwait(false);
             }
-
-            Console.Out.WriteLine(" ------------------- p = {0}", p);
-            Console.Out.WriteLine(" ------------------- q = {0}", q);
 
             return (p, q);
         }
 
-        private static async Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync(int taskId, CancellationToken cancellationToken)
+        private static async Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync(int taskId,
+            CancellationToken cancellationToken)
         {
             (BigInteger, BigInteger) pq = await Task.Run(async () =>
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    await Console.Out.WriteLineAsync($"Task {taskId} is canceled before started.").ConfigureAwait(false);
+                    await Console.Out.WriteLineAsync($"Task {taskId} is canceled before started.")
+                        .ConfigureAwait(false);
                     cancellationToken.ThrowIfCancellationRequested();
                 }
 
@@ -104,37 +104,28 @@ namespace DSAEncDecLib.Engine
                         BigInteger mr = m % (2 * q);
                         p = m - mr + 1;
 
-                        if (p.IsProbablyPrime(10))
+                        if (p.IsProbablyPrime(witnesses: 10))
                         {
-                            await Console.Out.WriteLineAsync($"Number of iterations performed: {i + 1}").ConfigureAwait(false);
-                            //Console.Out.WriteLine("m = {0}", m);
-                            //Console.Out.WriteLine($"m len = {m.ToByteArray().Length * 8}");
-
-                            //Console.Out.WriteLine("mr = {0}", mr);
-                            //Console.Out.WriteLine($"mr len = {mr.ToByteArray().Length * 8}");
                             found = true;
                             break;
                         }
                     }
                 }
 
-                await Console.Out.WriteLineAsync($"p = {p}").ConfigureAwait(false);
-                await Console.Out.WriteLineAsync($"q = {q}").ConfigureAwait(false);
-                await Console.Out.WriteLineAsync($"======================= TASK {taskId} COMPLETED =========================\n").ConfigureAwait(false);
-
                 return (p, q);
-
             }, cancellationToken).ConfigureAwait(false);
 
             return pq;
 
-            async Task CancelIfCancellationRequested(int cancelledTaskId, CancellationToken issuedCancellationToken)
+            Task CancelIfCancellationRequested(int cancelledTaskId, CancellationToken issuedCancellationToken)
             {
                 if (issuedCancellationToken.IsCancellationRequested)
                 {
-                    await Console.Out.WriteLineAsync($"Task [ID: {cancelledTaskId}] is canceled.").ConfigureAwait(false);
+                    //await Console.Out.WriteLineAsync($"Task [ID: {cancelledTaskId}] is canceled.").ConfigureAwait(false);
                     issuedCancellationToken.ThrowIfCancellationRequested();
                 }
+
+                return Task.CompletedTask;
             }
         }
 
@@ -166,9 +157,9 @@ namespace DSAEncDecLib.Engine
             var hash = new BigInteger(hashOfSignedData);
 
             BigInteger u1 = BigInteger.ModPow(
-                modularMultiplicativeInversS * hash,
-                1,
-                PublicKey.Q);
+                value: modularMultiplicativeInversS * hash,
+                exponent: 1,
+                modulus: PublicKey.Q);
 
             return u1;
         }
@@ -176,9 +167,9 @@ namespace DSAEncDecLib.Engine
         private BigInteger ComputeSecondAuxiliaryNumber(DSASignature signature, BigInteger modularMultiplicativeInversS)
         {
             BigInteger u2 = BigInteger.ModPow(
-                modularMultiplicativeInversS * signature.R,
-                1,
-                PublicKey.Q);
+                value: modularMultiplicativeInversS * signature.R,
+                exponent: 1,
+                modulus: PublicKey.Q);
 
             return u2;
         }

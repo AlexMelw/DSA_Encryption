@@ -73,14 +73,24 @@
 
         private static byte[] ComputeDataHash(IImputableOption option)
         {
-            byte[] dataHash;
+            byte[] positiveDataHash;
             using (var sha512 = SHA512.Create())
             {
                 byte[] inputByteArray = File.ReadAllBytes(option.InputFilePath);
-                dataHash = sha512.ComputeHash(inputByteArray);
+                byte[] realPosibleNegativeHash = sha512.ComputeHash(inputByteArray);
+
+                var hashSumInteger = new BigInteger(realPosibleNegativeHash);
+
+                positiveDataHash = hashSumInteger.Sign < 0
+                    ? hashSumPositiveInteger(hashSumInteger).ToByteArray()
+                    : hashSumInteger.ToByteArray();
             }
-            return dataHash;
+
+            return positiveDataHash;
+
+            BigInteger hashSumPositiveInteger(BigInteger integerHashSum) => BigInteger.Abs(integerHashSum) * 2 - 1;
         }
+
 
         private static void PersistPublicKeyToFile(string keyFileName, DSAPublicKey key)
         {
@@ -120,26 +130,28 @@
         }
 
 
-        private static void GenerateOutputFileNameIfNotSet(IOutputableOption options)
-        {
-            if (string.IsNullOrWhiteSpace(options.OutputFilePath))
-            {
-                string fileExtension = CreateFileExtension(options);
-                string filePrefixName = CreateFilePrefixName(options, ref fileExtension);
+        //private static void GenerateOutputFileNameIfNotSet(IOutputableOption options)
+        //{
+        //    if (string.IsNullOrWhiteSpace(options.OutputFilePath))
+        //    {
+        //        //string fileExtension = CreateFileExtension(options);
+        //        string fileExtension = ".sgn";
+        //        //string filePrefixName = CreateFilePrefixName(options, ref fileExtension);
+        //        string filePrefixName = ;
 
-                options.OutputFilePath = AggregateFileNameConstituentParts(filePrefixName, fileExtension);
-            }
-        }
+        //        options.OutputFilePath = AggregateFileNameConstituentParts(filePrefixName, fileExtension);
+        //    }
+        //}
 
-        private static string AggregateFileNameConstituentParts(string filePrefixName, string fileExtension)
-        {
-            DateTime now = DateTime.Now;
+        //private static string AggregateFileNameConstituentParts(string filePrefixName, string fileExtension)
+        //{
+        //    DateTime now = DateTime.Now;
 
-            return $"{filePrefixName}_" +
-                   $"{now.Year}-{now.Month}-{now.Day}_" +
-                   $"{now.Hour}{now.Minute}{now.Second}{now.Millisecond}" +
-                   $"{fileExtension}";
-        }
+        //    return $"{filePrefixName}_" +
+        //           $"{now.Year}-{now.Month}-{now.Day}_" +
+        //           $"{now.Hour}{now.Minute}{now.Second}{now.Millisecond}" +
+        //           $"{fileExtension}";
+        //}
 
         private static string AggregateFileNameConstituentParts(IKeyParams keyParams, KeyType keyType, string timeStamp)
         {
@@ -153,44 +165,52 @@
         }
 
 
-        private static string CreateFileExtension(IOutputableOption options)
-        {
-            string fileExtension = Path.HasExtension(options.OutputFilePath)
-                ? $".{Path.GetExtension(options.OutputFilePath)}"
-                : string.Empty;
-            return fileExtension;
-        }
+        //private static string CreateFileExtension(IOutputableOption options)
+        //{
+        //    string fileExtension = Path.HasExtension(options.OutputFilePath)
+        //        ? $".{Path.GetExtension(options.OutputFilePath)}"
+        //        : string.Empty;
+        //    return fileExtension;
+        //}
 
-        private static string CreateFilePrefixName(IOutputableOption options, ref string fileExtension)
-        {
-            string filePrefixName;
+        //private static string CreateFilePrefixName(IOutputableOption options, ref string fileExtension)
+        //{
+        //    string filePrefixName;
 
-            switch (options)
-            {
-                case SignDataVerbOptions opts:
-                    filePrefixName = "EncryptedData";
-                    break;
+        //    switch (options)
+        //    {
+        //        case SignDataVerbOptions opts:
+        //            filePrefixName = "DataSignature";
+        //            break;
 
-                case VerifyDigitalSignatureVerbOptions opts:
-                    filePrefixName = "DecryptedData";
-                    break;
+        //        case GenerateDSAKeyPair opts:
+        //            fileExtension = ".key";
+        //            break;
 
-                case GenerateDSAKeyPair opts:
-                    filePrefixName = "SK";
-                    fileExtension = ".key";
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(options));
-            }
-            return filePrefixName;
-        }
+        //        default:
+        //            throw new ArgumentOutOfRangeException(nameof(options));
+        //    }
+        //    return filePrefixName;
+        //}
 
         private static string CreateTimeStamp()
         {
             DateTime now = DateTime.Now;
             string timeStamp = $"{now.Year}-{now.Month}-{now.Day}_{now.Hour}{now.Minute}{now.Second}{now.Millisecond}";
             return timeStamp;
+        }
+
+        private static void GenerateOutputFileNameIfNotSet(SignDataVerbOptions option)
+        {
+            if (string.IsNullOrWhiteSpace(option.OutputFilePath))
+            {
+                DateTime now = DateTime.Now;
+
+                option.OutputFilePath = $"{Path.GetFileName(option.InputFilePath)}_DigitalSignature_" +
+                                        $"{now.Year}-{now.Month}-{now.Day}_" +
+                                        $"{now.Hour}{now.Minute}{now.Second}{now.Millisecond}" +
+                                        ".sgn";
+            }
         }
     }
 

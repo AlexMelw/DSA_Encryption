@@ -31,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Key.ico</ApplicationIcon>
@@ -47,11 +48,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\KeyType.cs" />
     <Compile Include="Interfaces\IDigitalSignaturePath.cs" />
     <Compile Include="Interfaces\IImputableOption.cs" />
     <Compile Include="Interfaces\IPrivateKeyOption.cs" />
     <Compile Include="Interfaces\IPublicKeyOption.cs" />
     <Compile Include="Facade\Program.CommandProcessor.cs" />
+    <Compile Include="Interfaces\IKeyParams.cs" />
     <Compile Include="Options\VerifyDigitalSignatureVerbOptions.cs" />
     <Compile Include="Options\SignDataVerbOptions.cs" />
     <Compile Include="Options\GenerateDSAKeyPair.cs" />

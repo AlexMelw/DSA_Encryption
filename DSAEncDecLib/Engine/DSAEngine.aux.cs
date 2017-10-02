@@ -10,7 +10,7 @@ namespace DSAEncDecLib.Engine
 
     partial class DSAEngine
     {
-        private async Task<(BigInteger p, BigInteger q)> GeneratePQPairAsync()
+        private async Task<(BigInteger p, BigInteger q)> GeneratePQPairAsync(int keySize)
         {
             await Console.Out.WriteLineAsync("The key-pair generation process is running...").ConfigureAwait(false);
 
@@ -26,14 +26,14 @@ namespace DSAEncDecLib.Engine
                     case 16:
                         (p, q) = await
                             (await Task.WhenAny(
-                                    GeneratePQPrimesAsync(1, cancellationToken),
-                                    GeneratePQPrimesAsync(2, cancellationToken),
-                                    GeneratePQPrimesAsync(3, cancellationToken),
-                                    GeneratePQPrimesAsync(4, cancellationToken),
-                                    GeneratePQPrimesAsync(5, cancellationToken),
-                                    GeneratePQPrimesAsync(6, cancellationToken),
-                                    GeneratePQPrimesAsync(7, cancellationToken),
-                                    GeneratePQPrimesAsync(8, cancellationToken))
+                                    GeneratePQPrimesAsync(keySize, 1, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 2, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 3, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 4, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 5, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 6, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 7, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 8, cancellationToken))
                                 .ConfigureAwait(false))
                             .ConfigureAwait(false);
                         break;
@@ -41,10 +41,10 @@ namespace DSAEncDecLib.Engine
                     case 8:
                         (p, q) = await
                             (await Task.WhenAny(
-                                    GeneratePQPrimesAsync(1, cancellationToken),
-                                    GeneratePQPrimesAsync(2, cancellationToken),
-                                    GeneratePQPrimesAsync(3, cancellationToken),
-                                    GeneratePQPrimesAsync(4, cancellationToken))
+                                    GeneratePQPrimesAsync(keySize, 1, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 2, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 3, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 4, cancellationToken))
                                 .ConfigureAwait(false))
                             .ConfigureAwait(false);
                         break;
@@ -52,8 +52,8 @@ namespace DSAEncDecLib.Engine
                     case 4:
                         (p, q) = await
                             (await Task.WhenAny(
-                                    GeneratePQPrimesAsync(1, cancellationToken),
-                                    GeneratePQPrimesAsync(2, cancellationToken))
+                                    GeneratePQPrimesAsync(keySize, 1, cancellationToken),
+                                    GeneratePQPrimesAsync(keySize, 2, cancellationToken))
                                 .ConfigureAwait(false))
                             .ConfigureAwait(false);
                         break;
@@ -61,7 +61,7 @@ namespace DSAEncDecLib.Engine
                     case 2:
                     case 1:
                     default:
-                        (p, q) = await GeneratePQPrimesAsync(1, cancellationToken)
+                        (p, q) = await GeneratePQPrimesAsync(keySize, 1, cancellationToken)
                             .ConfigureAwait(false);
                         break;
                 }
@@ -75,8 +75,8 @@ namespace DSAEncDecLib.Engine
             return (p, q);
         }
 
-        private static async Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync(int taskId,
-            CancellationToken cancellationToken)
+        private static async Task<(BigInteger, BigInteger)> GeneratePQPrimesAsync(int keySize,
+            int taskId, CancellationToken cancellationToken)
         {
             (BigInteger, BigInteger) pq = await Task.Run(async () =>
             {
@@ -94,17 +94,18 @@ namespace DSAEncDecLib.Engine
                 {
                     await CancelIfCancellationRequested(taskId, cancellationToken).ConfigureAwait(false);
 
-                    q = await MaurerAlgorithm.Instance.GetProvablePrimeAsync(160).ConfigureAwait(false);
+                    q = await MaurerAlgorithm.Instance.GetProvablePrimeAsync(PrimeFactorsMapper.PQRelation[keySize])
+                        .ConfigureAwait(false);
 
                     for (int i = 0; i < 4096; i++)
                     {
                         await CancelIfCancellationRequested(taskId, cancellationToken).ConfigureAwait(false);
 
-                        BigInteger m = BigIntegerUtil.RandomPositiveFixedSizeBigInteger(1024);
+                        BigInteger m = BigIntegerUtil.RandomPositiveFixedSizeBigInteger(keySize);
                         BigInteger mr = m % (2 * q);
                         p = m - mr + 1;
 
-                        if (p.IsProbablyPrime(witnesses: 10))
+                        if (p.IsProbablyPrime(witnesses: 10) && (p - 1) % q == 0)
                         {
                             found = true;
                             break;

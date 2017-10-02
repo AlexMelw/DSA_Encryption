@@ -29,6 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -51,6 +52,7 @@
     <Compile Include="Engine\DSAEngine.aux.cs" />
     <Compile Include="Engine\DSAEngine.cs" />
     <Compile Include="DSFactory.cs" />
+    <Compile Include="PrimeFactorsMapper.cs" />
     <Compile Include="SpecificTypes\DSASignature.cs" />
     <Compile Include="SpecificTypes\DSAPrivateKey.cs" />
     <Compile Include="SpecificTypes\DSAPublicKey.cs" />

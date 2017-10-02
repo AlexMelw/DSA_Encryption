@@ -6,6 +6,7 @@
     using DSAEncDecLib.Interfaces;
     using DSAEncDecLib.SpecificTypes;
     using EasySharp.NHelpers.CustomExMethods;
+    using Enums;
     using Options;
 
     static partial class Program
@@ -14,9 +15,12 @@
         {
             Task.Run(async () =>
             {
+                CheckKeySizeOption(options);
+
                 IKeygen keygen = DSFactory.CreateKeygen();
 
-                (DSAPublicKey, DSAPrivateKey) keyPair = await keygen.GenerateKeyPairAsync().ContinueOnCapturedContext();
+                (DSAPublicKey, DSAPrivateKey) keyPair =
+                    await keygen.GenerateKeyPairAsync(options.KeyBitLength).ContinueOnCapturedContext();
 
                 string timeStamp = CreateTimeStamp();
 

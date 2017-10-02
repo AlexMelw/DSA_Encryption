@@ -5,6 +5,8 @@
     using System.Numerics;
     using System.Security.Cryptography;
     using DSAEncDecLib.SpecificTypes;
+    using EasySharp.NHelpers.CustomExMethods;
+    using Enums;
     using Interfaces;
     using Options;
 
@@ -129,30 +131,6 @@
             Console.Out.WriteLine($"The result file is: {keyFileName}");
         }
 
-
-        //private static void GenerateOutputFileNameIfNotSet(IOutputableOption options)
-        //{
-        //    if (string.IsNullOrWhiteSpace(options.OutputFilePath))
-        //    {
-        //        //string fileExtension = CreateFileExtension(options);
-        //        string fileExtension = ".sgn";
-        //        //string filePrefixName = CreateFilePrefixName(options, ref fileExtension);
-        //        string filePrefixName = ;
-
-        //        options.OutputFilePath = AggregateFileNameConstituentParts(filePrefixName, fileExtension);
-        //    }
-        //}
-
-        //private static string AggregateFileNameConstituentParts(string filePrefixName, string fileExtension)
-        //{
-        //    DateTime now = DateTime.Now;
-
-        //    return $"{filePrefixName}_" +
-        //           $"{now.Year}-{now.Month}-{now.Day}_" +
-        //           $"{now.Hour}{now.Minute}{now.Second}{now.Millisecond}" +
-        //           $"{fileExtension}";
-        //}
-
         private static string AggregateFileNameConstituentParts(IKeyParams keyParams, KeyType keyType, string timeStamp)
         {
             string extension = keyType.ToString().ToLower();
@@ -163,35 +141,6 @@
 
             return finalFileName;
         }
-
-
-        //private static string CreateFileExtension(IOutputableOption options)
-        //{
-        //    string fileExtension = Path.HasExtension(options.OutputFilePath)
-        //        ? $".{Path.GetExtension(options.OutputFilePath)}"
-        //        : string.Empty;
-        //    return fileExtension;
-        //}
-
-        //private static string CreateFilePrefixName(IOutputableOption options, ref string fileExtension)
-        //{
-        //    string filePrefixName;
-
-        //    switch (options)
-        //    {
-        //        case SignDataVerbOptions opts:
-        //            filePrefixName = "DataSignature";
-        //            break;
-
-        //        case GenerateDSAKeyPair opts:
-        //            fileExtension = ".key";
-        //            break;
-
-        //        default:
-        //            throw new ArgumentOutOfRangeException(nameof(options));
-        //    }
-        //    return filePrefixName;
-        //}
 
         private static string CreateTimeStamp()
         {
@@ -212,11 +161,14 @@
                                         ".sgn";
             }
         }
-    }
 
-    internal enum KeyType
-    {
-        Private,
-        Public
+        private static void CheckKeySizeOption(GenerateDSAKeyPair option)
+        {
+            if (!option.KeyBitLength.In(new[] { 1024, 2048, 3072 }))
+            {
+                Console.Out.WriteLine("Wrong key size selected. The only allowed values are: [1024, 2048, 3072].");
+                Environment.Exit(1);
+            }
+        }
     }
 }

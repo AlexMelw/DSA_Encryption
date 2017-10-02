@@ -5,6 +5,6 @@
 
     public interface IKeygen
     {
-        Task<(DSAPublicKey, DSAPrivateKey)> GenerateKeyPairAsync();
+        Task<(DSAPublicKey, DSAPrivateKey)> GenerateKeyPairAsync(int keySize);
     }
 }

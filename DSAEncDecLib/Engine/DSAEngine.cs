@@ -1,6 +1,7 @@
 ﻿namespace DSAEncDecLib.Engine
 {
     using System;
+    using System.Diagnostics;
     using System.Numerics;
     using System.Threading.Tasks;
     using AlgorithmHelpers;
@@ -22,15 +23,23 @@
             PrivateKey = privateKey;
         }
 
-        public async Task<(DSAPublicKey, DSAPrivateKey)> GenerateKeyPairAsync()
+        public async Task<(DSAPublicKey, DSAPrivateKey)> GenerateKeyPairAsync(int keySize)
         {
-            var (p, q) = await GeneratePQPairAsync().ConfigureAwait(false);
+            Stopwatch overallStopwatch = Stopwatch.StartNew();
+
+            var (p, q) = await GeneratePQPairAsync(keySize).ConfigureAwait(false);
             var alpha = GenerateAlpha(p, q);
             var d = BigIntegerUtil.NextBigInteger(1, q);
             var beta = BigInteger.ModPow(alpha, d, p);
 
             var dsaPublicKey = new DSAPublicKey(p, q, alpha, beta);
             var dsaPrivateKey = new DSAPrivateKey(d);
+
+            TimeSpan elapsed = overallStopwatch.Elapsed;
+            await Console.Out.WriteLineAsync($"Key generation status: operation completed in " +
+                                             $"{elapsed.Minutes} min, " +
+                                             $"{elapsed.Seconds} sec, " +
+                                             $"{elapsed.Milliseconds} ms.").ConfigureAwait(false);
 
             //Console.Out.WriteLine("q | p-1 = {0}", (p - 1) % q == 0);
 

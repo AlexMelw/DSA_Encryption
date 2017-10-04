@@ -48,22 +48,28 @@
 
         public DSASignature CreateSignature(byte[] hashOfDataToSign)
         {
-            BigInteger ephemeralKey = BigIntegerUtil.NextBigInteger(1, PublicKey.Q);
+            (BigInteger r, BigInteger s) = default((BigInteger, BigInteger));
 
-            BigInteger r = BigInteger.ModPow(
-                value: BigInteger.ModPow(PublicKey.Alpha, ephemeralKey, PublicKey.P),
-                exponent: 1,
-                modulus: PublicKey.Q);
+            do
+            {
+                BigInteger ephemeralKey = BigIntegerUtil.NextBigInteger(1, PublicKey.Q);
 
+                r = BigInteger.ModPow(
+                    value: BigInteger.ModPow(PublicKey.Alpha, ephemeralKey, PublicKey.P),
+                    exponent: 1,
+                    modulus: PublicKey.Q);
 
-            BigInteger ephemeralKeyMultiplicativeInverse =
-                ComputeModularMultiplicativeInverse(ephemeralKey, PublicKey.Q);
+                BigInteger ephemeralKeyMultiplicativeInverse =
+                    ComputeModularMultiplicativeInverse(ephemeralKey, PublicKey.Q);
 
-            var hashNumber = new BigInteger(hashOfDataToSign);
-            BigInteger s = BigInteger.ModPow(
-                value: (hashNumber + PrivateKey.D * r) * ephemeralKeyMultiplicativeInverse,
-                exponent: 1,
-                modulus: PublicKey.Q);
+                var hashNumber = new BigInteger(hashOfDataToSign);
+
+                s = BigInteger.ModPow(
+                    value: (hashNumber + PrivateKey.D * r) * ephemeralKeyMultiplicativeInverse,
+                    exponent: 1,
+                    modulus: PublicKey.Q);
+
+            } while (r == 0 || s == 0);
 
             var signature = new DSASignature(r, s);
 
@@ -72,10 +78,15 @@
 
         public bool VerifySignature(byte[] hashOfSignedData, DSASignature signature)
         {
-            BigInteger modularMultiplicativeInversS = ComputeModularMultiplicativeInverse(signature.S, PublicKey.Q);
+            if (signature.S <= 0 || signature.R <= 0 || signature.R >= PublicKey.Q || signature.S >= PublicKey.Q)
+            {
+                return false;
+            }
 
-            BigInteger u1 = ComputeFirstAuxiliaryNumber(hashOfSignedData, signature, modularMultiplicativeInversS);
-            BigInteger u2 = ComputeSecondAuxiliaryNumber(signature, modularMultiplicativeInversS);
+            BigInteger modularMultiplicativeInverseS = ComputeModularMultiplicativeInverse(signature.S, PublicKey.Q);
+
+            BigInteger u1 = ComputeFirstAuxiliaryNumber(hashOfSignedData, signature, modularMultiplicativeInverseS);
+            BigInteger u2 = ComputeSecondAuxiliaryNumber(signature, modularMultiplicativeInverseS);
             BigInteger v = ComputeV(u1, u2);
 
             return v == signature.R;

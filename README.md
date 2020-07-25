@@ -1,4 +1,4 @@
-# DSA (Digital Signature Algorithm) Encryption Utility (CLI)
+# DSA (Digital Signature Algorithm) Utility (CLI)
 
 Implemented in C# (.NET Framework 4.6.1) adhering to the Federal Information Processing Standard for digital signatures algorithm.
 
